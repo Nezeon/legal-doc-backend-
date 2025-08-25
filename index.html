@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LegalEase Upload Test</title>
+</head>
+<body>
+  <h2>Upload a Legal Document</h2>
+
+  <!-- File upload form -->
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" accept=".pdf,.docx,.txt" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <!-- Where we’ll show the server response -->
+  <pre id="response"></pre>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const responseBox = document.getElementById('response');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files.length) {
+        alert('Please select a file first.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const res = await fetch('http://localhost:3000/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        responseBox.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        responseBox.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
